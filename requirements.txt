@@ -1,0 +1,14 @@
+ucimlrepo
+pandas 
+numpy
+scikit-learn
+matplotlib 
+seaborn 
+ucimlrepo 
+joblib
+fastapi
+uvicorn 
+pydantic 
+jinja2 
+pydantic-settings 
+python-multipart
