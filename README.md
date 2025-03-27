@@ -75,3 +75,7 @@ Both models demonstrate strong performance in heart disease prediction, with **X
 
 ---  
 dataseturl https://www.kaggle.com/datasets/redwankarimsony/heart-disease-data
+
+
+
+blogPost url https://medium.com/@pjjames095/heart-disease-prediction-using-machine-learning-a-step-by-step-guide-23b953f931d2
