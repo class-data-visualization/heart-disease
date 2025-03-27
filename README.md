@@ -74,4 +74,4 @@ The **Cleveland Heart Disease Dataset** is a multivariate dataset containing cli
 Both models demonstrate strong performance in heart disease prediction, with **XGBoost** (86% accuracy) slightly outperforming **Random Forest** (84%). The choice depends on clinical requirements - whether prioritizing model stability (Random Forest) or predictive accuracy (XGBoost).
 
 ---  
-dataseturl [](https://www.kaggle.com/datasets/redwankarimsony/heart-disease-data)
+dataseturl https://www.kaggle.com/datasets/redwankarimsony/heart-disease-data
