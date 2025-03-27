@@ -1,156 +1,77 @@
-# Heart Disease Analysis Project
+# Heart Disease Prediction Model Performance Report  
 
-This repository contains a Jupyter notebook (`heart-disease.ipynb`) for analyzing heart disease data using advanced data science and visualization techniques.
+## Project Overview  
+This project evaluates and compares the performance of **Random Forest** and **XGBoost Classifier** models for predicting heart disease using the Cleveland Heart Disease dataset. Both models were fine-tuned through hyperparameter optimization to achieve optimal classification performance.
 
-## Overview
+## Dataset Description  
+The **Cleveland Heart Disease Dataset** is a multivariate dataset containing clinical features for cardiovascular disease prediction. Key characteristics:
 
-This project focuses on comprehensive analysis of heart disease data through:
+- **Type**: Multivariate (numerical/categorical)  
+- **Attributes**: 14 clinically relevant features (subset from original 76)  
+- **Target**: Presence of heart disease (binary classification)  
+- **Size**: 303 instances  
 
-- Data preprocessing and cleaning
-- Exploratory Data Analysis (EDA)
-- Statistical analysis and insights generation
-- Advanced data visualization
-- Feature importance analysis
-- Risk factor assessment
+### Key Features:
+1. Demographic:  
+   - Age  
+   - Sex  
 
-## Project Structure
+2. Clinical Measurements:  
+   - Chest pain type (4 values)  
+   - Resting blood pressure  
+   - Serum cholesterol  
+   - Fasting blood sugar  
+   - Resting electrocardiographic results  
 
-- `heart-disease.ipynb`: Main Jupyter notebook containing the analysis
-  - Data preprocessing and cleaning
-  - Exploratory Data Analysis (EDA)
-  - Statistical analysis
-  - Data visualization
-  - Feature importance analysis
-  - Risk assessment
+3. Exercise-Induced Metrics:  
+   - Maximum heart rate achieved  
+   - Exercise-induced angina  
+   - ST depression (oldpeak)  
+   - Slope of peak exercise ST segment  
 
-## Features
+4. Cardiac Test Results:  
+   - Number of major vessels  
+   - Thalassemia  
 
-### Data Preprocessing and Analysis
+*Note: This is the most widely used version in ML research, containing only 14 of the original 76 attributes.*
 
-- Comprehensive data cleaning and preprocessing
-- Handling missing values and outliers
-- Feature engineering and transformation
-- Data quality assessment
-- Feature scaling and normalization
-- Categorical variable encoding
+## Key Findings  
 
-### Exploratory Data Analysis
+### Model Performance  
+| **Model**          | **Test Accuracy** | **Key Strengths** |
+|--------------------|------------------|------------------|
+| **Random Forest**  | **84%**          | Robust, resistant to overfitting, reliable performance |
+| **XGBoost**        | **86%**          | Higher accuracy, captures complex relationships |
 
-- Statistical analysis of key metrics
-- Correlation analysis between features
-- Distribution analysis of variables
-- Pattern identification in the dataset
-- Age and gender distribution analysis
-- Risk factor prevalence analysis
-- Temporal trend analysis (if applicable)
+### Comparative Analysis  
+- **Random Forest**: Performs well with clinical data structure and provides strong resistance to overfitting  
+- **XGBoost**: Achieves better accuracy by modeling complex relationships between clinical indicators  
 
-### Data Visualization
+### Hyperparameter Configurations  
+| **Hyperparameter**       | **Random Forest** | **XGBoost**       |
+|--------------------------|-------------------|-------------------|
+| Maximum Depth            | 10                | 3                 |
+| Learning Rate            | -                 | 0.1               |
+| Number of Estimators     | 100               | 50                |
+| Gamma                    | -                 | 2                 |
+| Subsample Ratio          | -                 | 1.0               |
+| Column Sample by Tree    | -                 | 0.8               |
+| Minimum Samples per Leaf | 4                 | -                 |
+| Minimum Samples for Split| 2                 | -                 |
 
-- Interactive visualizations using Plotly
-- Statistical plots with Seaborn
-- Custom visualizations with Matplotlib
-- Carefully selected chart types for optimal insight communication:
-  - Distribution plots
-    - Age distribution by heart disease status
-    - Gender distribution analysis
-    - Risk factor distribution
-  - Correlation heatmaps
-    - Feature correlation analysis
-    - Risk factor relationships
-  - Box plots
-    - Age distribution across different conditions
-    - Risk factor distribution by disease status
-  - Scatter plots
-    - Age vs. various risk factors
-    - Feature relationships
-  - Bar charts
-    - Risk factor prevalence
-    - Gender-based analysis
-    - Age group analysis
-  - Pie charts
-    - Disease distribution
-    - Risk factor proportions
-  - Violin plots
-    - Age distribution across conditions
-    - Risk factor distribution
-  - Pair plots
-    - Multi-feature relationships
-    - Risk factor interactions
-  - Custom visualizations
-    - Risk score analysis
-    - Feature importance plots
-    - Age group analysis
-    - Gender-based risk analysis
+## Recommendations  
+- **Use Random Forest** when:  
+  - Clinical interpretability is crucial  
+  - Working with limited patient data  
+  - Need robust performance across populations  
 
-### Key Insights and Analysis
+- **Use XGBoost** when:  
+  - Maximizing diagnostic accuracy is critical  
+  - Working with complete patient profiles  
+  - Can handle slightly longer training times  
 
-- Age and gender impact on heart disease
-- Risk factor identification and analysis
-- Feature importance ranking
-- Correlation between different health indicators
-- Prevalence of different risk factors
-- Age group vulnerability analysis
-- Gender-based risk assessment
+## Conclusion  
+Both models demonstrate strong performance in heart disease prediction, with **XGBoost** (86% accuracy) slightly outperforming **Random Forest** (84%). The choice depends on clinical requirements - whether prioritizing model stability (Random Forest) or predictive accuracy (XGBoost).
 
-## Getting Started
-
-1. Clone this repository
-2. Install the required dependencies:
-   - pandas
-   - numpy
-   - matplotlib
-   - seaborn
-   - plotly
-   - scikit-learn
-   - scipy
-   - statsmodels
-3. Open the Jupyter notebook
-4. Run the cells in sequence
-
-## Usage
-
-The notebook is structured in the following sections:
-
-1. Data Loading and Initial Exploration
-   - Dataset overview
-   - Basic statistics
-   - Missing value analysis
-2. Data Preprocessing
-   - Data cleaning
-   - Feature engineering
-   - Data transformation
-3. Exploratory Data Analysis
-   - Statistical analysis
-   - Correlation analysis
-   - Pattern identification
-4. Visualization Generation
-   - Distribution analysis
-   - Relationship analysis
-   - Risk factor analysis
-5. Feature Importance Analysis
-   - Feature ranking
-   - Impact assessment
-6. Risk Assessment
-   - Risk factor analysis
-   - Vulnerability assessment
-7. Insights and Conclusions
-   - Key findings
-   - Recommendations
-
-Each section builds upon the previous one, providing a comprehensive analysis of the heart disease dataset.
-
-## Notes
-
-- The analysis focuses on identifying key risk factors for heart disease
-- Visualizations are designed to highlight important patterns and relationships
-- Age and gender-based analysis provides insights into demographic patterns
-- Risk factor analysis helps in understanding disease prevalence
-- Feature importance analysis guides preventive measures
-
-## Contributing
-
-Feel free to submit issues and enhancement requests!
-
-## License
-
-This project is licensed under the MIT License - see the LICENSE file for details.
+---  
+dataseturl [](https://www.kaggle.com/datasets/redwankarimsony/heart-disease-data)
