@@ -16,7 +16,6 @@ from sklearn.metrics import (accuracy_score, classification_report,
                              confusion_matrix, roc_auc_score, roc_curve,
                              precision_score, recall_score)
 
-# Create directories for saving artifacts
 os.makedirs('saved_models', exist_ok=True)
 os.makedirs('preprocessing', exist_ok=True)
 os.makedirs('datasets', exist_ok=True)
@@ -162,7 +161,6 @@ if st.session_state.artifacts_loaded or all([os.path.exists(f'saved_models/{m}_m
 
     with tab2:
         st.subheader("Model Performance Analysis")
-        # Apply same preprocessing as training
         data_vis_encoded = data_1_vis.copy()
         for col, le in artifacts['label_encoders'].items():
             if col in data_vis_encoded.columns:
