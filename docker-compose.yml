@@ -1,0 +1,11 @@
+version: "3.8"
+
+services:
+  heart-disease-app:
+    build: .
+    ports:
+      - "8000:8000"
+    volumes:
+      - ./kaggle.json:/app/kaggle.json
+    environment:
+      - KAGGLE_CONFIG_DIR=/root/.kaggle
