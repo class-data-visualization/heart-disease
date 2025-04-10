@@ -153,7 +153,7 @@ if st.session_state.artifacts_loaded or all([os.path.exists(f'saved_models/{m}_m
             st.plotly_chart(fig)
 
         st.write("### Correlation Matrix")
-        numeric_df = data_1_vis.select_dtypes(include=[np.number])  # ✅ FIX: Only numeric data
+        numeric_df = data_1_vis.select_dtypes(include=[np.number]) 
         corr = numeric_df.corr()
         fig = px.imshow(corr, text_auto=True, aspect="auto", color_continuous_scale='RdBu_r')
         st.plotly_chart(fig)
