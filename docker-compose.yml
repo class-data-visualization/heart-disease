@@ -4,7 +4,7 @@ services:
   heart-disease-app:
     build: .
     ports:
-      - "8000:8000"
+      - "80:80"
     volumes:
       - ./kaggle.json:/app/kaggle.json
     environment:
