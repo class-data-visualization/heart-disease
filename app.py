@@ -103,12 +103,14 @@ if st.button('Download Dataset'):
             X_train_scaled = scaler.fit_transform(X_train)
 
             if not all([os.path.exists(f'saved_models/{m}_model.pkl') for m in ['rf', 'xgb']]):
+                # Train Random Forest
                 rf = RandomForestClassifier(random_state=0, class_weight='balanced')
                 rf_grid = {'n_estimators': [50, 100], 'max_depth': [None, 10],
                            'min_samples_split': [2, 5], 'min_samples_leaf': [1, 2]}
                 rf_search = GridSearchCV(rf, rf_grid, cv=3, scoring='accuracy')
                 rf_search.fit(X_train_scaled, y_train)
 
+                # Train XGBoost
                 xgb = XGBClassifier(random_state=0)
                 xgb_grid = {'n_estimators': [50, 100], 'max_depth': [3, 5],
                             'learning_rate': [0.01, 0.1], 'subsample': [0.8, 1.0]}
@@ -140,6 +142,7 @@ if st.session_state.artifacts_loaded or all([os.path.exists(f'saved_models/{m}_m
                           'num_major_vessels', 'thalassemia_type', 'target']
 
     tab1, tab2, tab3 = st.tabs(["Data Exploration", "Model Performance", "Live Prediction"])
+    
     with tab1:
         st.subheader("Interactive Data Exploration")
         col1, col2 = st.columns(2)
@@ -157,24 +160,42 @@ if st.session_state.artifacts_loaded or all([os.path.exists(f'saved_models/{m}_m
         corr = numeric_df.corr()
         fig = px.imshow(corr, text_auto=True, aspect="auto", color_continuous_scale='RdBu_r')
         st.plotly_chart(fig)
-
+        
+        with st.expander("Additional Visualizations"):
+            st.write("#### Target Distribution")
+            fig_target = px.histogram(data_1_vis, x="target", text_auto=True, nbins=2, 
+                                      title="Distribution of Heart Disease Status", labels={"target": "Heart Disease"})
+            st.plotly_chart(fig_target)
+            
+            st.write("#### Age Distribution by Heart Disease Status")
+            fig_box = px.box(data_1_vis, x="target", y="age", 
+                             title="Age by Heart Disease Status", labels={"target": "Heart Disease", "age": "Age"})
+            st.plotly_chart(fig_box)
+            
+            st.write("#### Cholesterol vs. Resting Blood Pressure")
+            fig_scatter = px.scatter(data_1_vis, x="cholesterol", y="resting_blood_pressure", color="target",
+                                     title="Cholesterol vs. Resting Blood Pressure", labels={"target": "Heart Disease"})
+            st.plotly_chart(fig_scatter)
+            
+            st.write("#### Scatter Matrix")
+            fig_matrix = px.scatter_matrix(data_1_vis, dimensions=["age", "resting_blood_pressure", "cholesterol", "max_heart_rate_achieved"], 
+                                           color="target", title="Scatter Matrix of Selected Features")
+            st.plotly_chart(fig_matrix)
 
     with tab2:
         st.subheader("Model Performance Analysis")
+        # Prepare data for evaluation
         data_vis_encoded = data_1_vis.copy()
         for col, le in artifacts['label_encoders'].items():
             if col in data_vis_encoded.columns:
                 data_vis_encoded[col] = le.transform(data_vis_encoded[col])
-
         data_vis_encoded['exercise_induced_angina'] = data_vis_encoded['exercise_induced_angina'] * 1
 
         X_vis = data_vis_encoded.drop('target', axis=1)
         y_true = data_vis_encoded['target']
         X_scaled = artifacts['scaler'].transform(X_vis)
 
-
-
-
+        # Random Forest Performance
         st.write("## Random Forest Classifier")
         rf_pred = artifacts['rf_model'].predict(X_scaled)
         rf_proba = artifacts['rf_model'].predict_proba(X_scaled)[:, 1]
@@ -184,17 +205,54 @@ if st.session_state.artifacts_loaded or all([os.path.exists(f'saved_models/{m}_m
         col3.metric("Precision", f"{precision_score(y_true, rf_pred):.2f}")
         col4.metric("Recall", f"{recall_score(y_true, rf_pred):.2f}")
 
-        st.write("### Confusion Matrix")
-        cm = confusion_matrix(y_true, rf_pred)
-        fig = ff.create_annotated_heatmap(z=cm, x=['Pred 0', 'Pred 1'], y=['Actual 0', 'Actual 1'], colorscale='Blues')
-        st.plotly_chart(fig)
+        st.write("### Random Forest - Confusion Matrix")
+        cm_rf = confusion_matrix(y_true, rf_pred)
+        fig_rf_cm = ff.create_annotated_heatmap(z=cm_rf, x=['Pred 0', 'Pred 1'], y=['Actual 0', 'Actual 1'], colorscale='Blues')
+        st.plotly_chart(fig_rf_cm)
 
-        st.write("### Feature Importance")
-        fi = pd.DataFrame({
+        st.write("### Random Forest - Feature Importance")
+        fi_rf = pd.DataFrame({
             'Feature': X_vis.columns,
             'Importance': artifacts['rf_model'].feature_importances_
         }).sort_values(by='Importance', ascending=False)
-        st.plotly_chart(px.bar(fi, x='Importance', y='Feature', orientation='h'))
+        st.plotly_chart(px.bar(fi_rf, x='Importance', y='Feature', orientation='h'))
+
+        st.write("### Random Forest - ROC Curve")
+        fpr_rf, tpr_rf, _ = roc_curve(y_true, rf_proba)
+        fig_rf_roc = px.area(x=fpr_rf, y=tpr_rf, title="ROC Curve - Random Forest", 
+                             labels={"x": "False Positive Rate", "y": "True Positive Rate"})
+        fig_rf_roc.add_scatter(x=[0, 1], y=[0, 1], mode="lines", name="Baseline")
+        st.plotly_chart(fig_rf_roc)
+
+        st.markdown("---")
+        # XGBoost Performance
+        st.write("## XGBoost Classifier")
+        xgb_pred = artifacts['xgb_model'].predict(X_scaled)
+        xgb_proba = artifacts['xgb_model'].predict_proba(X_scaled)[:, 1]
+        col1, col2, col3, col4 = st.columns(4)
+        col1.metric("Accuracy", f"{accuracy_score(y_true, xgb_pred):.2f}")
+        col2.metric("ROC AUC", f"{roc_auc_score(y_true, xgb_proba):.2f}")
+        col3.metric("Precision", f"{precision_score(y_true, xgb_pred):.2f}")
+        col4.metric("Recall", f"{recall_score(y_true, xgb_pred):.2f}")
+
+        st.write("### XGBoost - Confusion Matrix")
+        cm_xgb = confusion_matrix(y_true, xgb_pred)
+        fig_xgb_cm = ff.create_annotated_heatmap(z=cm_xgb, x=['Pred 0', 'Pred 1'], y=['Actual 0', 'Actual 1'], colorscale='Blues')
+        st.plotly_chart(fig_xgb_cm)
+
+        st.write("### XGBoost - Feature Importance")
+        fi_xgb = pd.DataFrame({
+            'Feature': X_vis.columns,
+            'Importance': artifacts['xgb_model'].feature_importances_
+        }).sort_values(by='Importance', ascending=False)
+        st.plotly_chart(px.bar(fi_xgb, x='Importance', y='Feature', orientation='h'))
+
+        st.write("### XGBoost - ROC Curve")
+        fpr_xgb, tpr_xgb, _ = roc_curve(y_true, xgb_proba)
+        fig_xgb_roc = px.area(x=fpr_xgb, y=tpr_xgb, title="ROC Curve - XGBoost", 
+                              labels={"x": "False Positive Rate", "y": "True Positive Rate"})
+        fig_xgb_roc.add_scatter(x=[0, 1], y=[0, 1], mode="lines", name="Baseline")
+        st.plotly_chart(fig_xgb_roc)
 
     with tab3:
         st.subheader("Live Prediction")
